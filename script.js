@@ -7,12 +7,10 @@ class PageParser {
 
   constructor() {
     this.categoryNode = this.#getElementByAttributeValue('itemprop', 'category')
-    this.brandNode = this.#getElementByAttributeValue('itemprop', 'brand')
+    this.brandNode = this.#disableBrandLink(this.#getElementByAttributeValue('itemprop', 'brand'))
     this.nameNode = this.brandNode.parentNode.children[1]
     this.priceNode = this.#getElementByAttributeValue('itemprop', 'offers').children[0]
     this.badPriceNode = this.priceNode.parentNode.parentNode.children[1].children[0]
-
-    // this.#disableBrandLink()
   }
 
   getProductData() {
@@ -27,10 +25,11 @@ class PageParser {
     return productData
   }
 
-  #disableBrandLink() {
-    this.brandNode.href = '#'
-    let clonedNode = this.brandNode.cloneNode(true)
-    this.brandNode.replaceWith(clonedNode)
+  #disableBrandLink(node) {
+    node.href = '#'
+    let clonedNode = node.cloneNode(true)
+    node.replaceWith(clonedNode)
+    return clonedNode
   }
 
   #getElementByAttributeValue(attribute, value) {
@@ -266,9 +265,6 @@ class BanHammer {
 
         this.#listOfBannedBrands = [...data]
         console.log(this.#listOfBannedBrands)
-      })
-      .then(() => {
-        this.#styleLoader.setStyles()
       })
       .finally(() => {
         this.#styleLoader.setStyles()
