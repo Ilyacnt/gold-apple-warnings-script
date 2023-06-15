@@ -46,13 +46,15 @@ class StylesLoader {
 
         .selection {
             padding: 5px;
-            color: gray;
+            color: #001E33;
             cursor: pointer;
-            border: 2px solid rgba(217, 217, 217, 0.01);;
+            border: 2px solid rgba(217, 217, 217, 0.01);
+            border-radius: 3px;
         }
 
         .selection:hover {  
             border: 2px solid #0094FF;
+            background: rgba(0, 148, 255, 0.22);
             box-shadow: 0px 0px 25px rgba(0, 148, 255, 0.27);
         }
 
@@ -100,7 +102,7 @@ class StylesLoader {
     this.#addStylesToHTML(this.#customStylesheet)
     this.#pageParser = pageParser
 
-    this.#banHammer = new BanHammer(pageParser)
+    this.#banHammer = new BanHammer(pageParser, this)
 
     this.#modalNontification = new ModalNontification()
   }
@@ -229,9 +231,12 @@ class BanHammer {
     'Zielinski & Rozen',
   ]
   #pageParser
+  #styleLoader
 
-  constructor(pageParser) {
+  constructor(pageParser, styleLoader) {
     this.#pageParser = pageParser
+    this.#styleLoader = styleLoader
+
     this.#fetchBrandsFromGoogleSheets()
   }
 
@@ -243,12 +248,31 @@ class BanHammer {
       : false
   }
 
-  #addBannedClass() {
-    this.#pageParser
-  }
+  async #fetchBrandsFromGoogleSheets() {
+    const sheetId = '1Xb0lGvxA0JsXUPsm6vYYCQBnhhDfOxQ5vLnCKBxwteY'
+    const base = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?`
+    const sheetName = 'user-data'
+    const query = encodeURIComponent('Select *')
+    const url = `${base}&sheet=${sheetName}&tq=${query}`
 
-  #fetchBrandsFromGoogleSheets() {
-    // do this in future update
+    fetch(url)
+      .then((res) => res.text())
+      .then((rep) => {
+        //Remove additional text and extract only JSON:
+        const jsonData = JSON.parse(rep.substring(47).slice(0, -2))
+
+        let data = []
+        jsonData.table.rows.forEach((el) => data.push(el.c[0].v))
+
+        this.#listOfBannedBrands = [...data]
+        console.log(this.#listOfBannedBrands)
+      })
+      .then(() => {
+        this.#styleLoader.setStyles()
+      })
+      .finally(() => {
+        this.#styleLoader.setStyles()
+      })
   }
 }
 
@@ -256,7 +280,6 @@ class Main {
   static start() {
     const pageParser = new PageParser()
     const styleLoader = new StylesLoader(pageParser)
-    styleLoader.setStyles()
   }
 }
 
