@@ -6,13 +6,11 @@ class PageParser {
   badPriceNode
 
   constructor() {
-    this.categoryNode = this.#getElementByAttributeValue('itemprop', 'category')
-    this.brandNode = this.#disableBrandLink(this.#getElementByAttributeValue('itemprop', 'brand'))
-    this.nameNode = this.brandNode.parentNode.children[1]
-    this.priceNode =
-      this.#getElementByAttributeValue('itemprop', 'offers') &&
-      this.#getElementByAttributeValue('itemprop', 'offers').children[0]
-    this.badPriceNode = this.priceNode && this.priceNode.parentNode.parentNode.children[1].children[0]
+    if (this.#isNuxtPage()) {
+      this.#parseNodesFromNuxtPage()
+    } else {
+      this.#parseNodesFromPHPPage()
+    }
   }
 
   getProductData() {
@@ -27,6 +25,28 @@ class PageParser {
     return productData
   }
 
+  #parseNodesFromNuxtPage() {
+    this.categoryNode = this.#getElementByAttributeValue('itemprop', 'category')
+    this.brandNode = this.#disableBrandLink(this.#getElementByAttributeValue('itemprop', 'brand'))
+    this.nameNode = this.brandNode.parentNode.children[1]
+    this.priceNode = this.#getElementByAttributeValue('itemprop', 'offers')?.children[0]
+    this.badPriceNode = this?.priceNode?.parentNode?.parentNode?.children[1]?.children[0]
+  }
+
+  #parseNodesFromPHPPage() {
+    let headerProduct = document.getElementsByClassName('pdp-title pdp__form-title')[0]
+
+    
+
+    this.categoryNode = headerProduct.getElementsByClassName('subheading-1-2 pdp-title__type')[0]
+    this.brandNode = this.#disableBrandLink(headerProduct.getElementsByClassName('link-alt pdp-title__brand')[0]) 
+    this.nameNode = headerProduct.getElementsByClassName('pdp-title__name')[0]
+    this.priceNode = document.getElementsByClassName('price')[0]
+    this.badPriceNode = document.querySelectorAll('.pdp-form__price .old-price') && document.querySelectorAll('.pdp-form__price .old-price')[0] 
+
+    console.log(this.priceNode)
+  }
+
   #disableBrandLink(node) {
     node.href = '#'
     let clonedNode = node.cloneNode(true)
@@ -36,6 +56,16 @@ class PageParser {
 
   #getElementByAttributeValue(attribute, value) {
     return document.querySelectorAll(`[${attribute}=${value}]`)[0]
+  }
+
+  #isNuxtPage() {
+    if (document.getElementById('__nuxt')) {
+      console.log("IS NUXT PAGE")
+      return true
+    } else {
+      console.log("IS PHP PAGE")
+      return false
+    }
   }
 }
 
@@ -126,18 +156,22 @@ class StylesLoader {
           this.#addClassnameToNode(currentNode, 'banned')
         } else {
           this.#addClassnameToNode(currentNode, 'selection')
-          this.#addCopyListenerToNode(currentNode, currentNode.innerText)
+          this.#addCopyListenerToNode(currentNode, currentNode?.innerText)
         }
       }
     }
   }
 
   #addCopyListenerToNode(node, clipData) {
+    if (!node || !clipData) {
+      return null
+    }
+
     node.addEventListener('click', async () => {
       try {
         clipData = this.#repairClipDataIfItNeeds(clipData)
         await navigator.clipboard.writeText(clipData)
-        this.#modalNontification.showModal('Content copied to clipboard')
+        this.#modalNontification.showModal(`"${clipData}" copied to clipboard`)
       } catch (err) {
         this.#modalNontification.showModal('Failed to copy')
       }
@@ -295,6 +329,7 @@ class Main {
     const styleLoader = new StylesLoader(pageParser)
   }
 }
+
 
 if (document.readyState !== 'loading') {
   Main.start()
