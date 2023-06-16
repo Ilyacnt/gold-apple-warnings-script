@@ -133,6 +133,7 @@ class StylesLoader {
   #addCopyListenerToNode(node, clipData) {
     node.addEventListener('click', async () => {
       try {
+        clipData = this.#repairClipDataIfItNeeds(clipData)
         await navigator.clipboard.writeText(clipData)
         this.#modalNontification.showModal('Content copied to clipboard')
       } catch (err) {
@@ -149,6 +150,20 @@ class StylesLoader {
     const styleSheet = document.createElement('style')
     styleSheet.innerText = stylesheet
     document.head.appendChild(styleSheet)
+  }
+
+  #repairClipDataIfItNeeds(clipData) {
+    let repairedClipData = clipData.trim()
+
+    switch (repairedClipData) {
+      case 'VIVIENNE SABO':
+        repairedClipData = 'Vivienne Sabó'
+        break
+      default:
+        break
+    }
+
+    return repairedClipData
   }
 }
 
