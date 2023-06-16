@@ -1,0 +1,34 @@
+{
+  "name": "gold-apple-warnings-script",
+  "version": "1.0.0",
+  "description": "This script warns about prohibited brands and allows for quickly copying product data",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ilyacnt/gold-apple-warnings-script.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ilyacnt/gold-apple-warnings-script/issues"
+  },
+  "homepage": "https://github.com/Ilyacnt/gold-apple-warnings-script#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.22.5",
+    "@webpack-cli/generators": "^3.0.7",
+    "webpack": "^5.87.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^9.1.2"
+  }
+}
