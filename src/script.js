@@ -9,17 +9,19 @@ class PageParser {
     this.categoryNode = this.#getElementByAttributeValue('itemprop', 'category')
     this.brandNode = this.#disableBrandLink(this.#getElementByAttributeValue('itemprop', 'brand'))
     this.nameNode = this.brandNode.parentNode.children[1]
-    this.priceNode = this.#getElementByAttributeValue('itemprop', 'offers').children[0]
-    this.badPriceNode = this.priceNode.parentNode.parentNode.children[1].children[0]
+    this.priceNode =
+      this.#getElementByAttributeValue('itemprop', 'offers') &&
+      this.#getElementByAttributeValue('itemprop', 'offers').children[0]
+    this.badPriceNode = this.priceNode && this.priceNode.parentNode.parentNode.children[1].children[0]
   }
 
   getProductData() {
     let productData = {
-      category: this.categoryNode.innerText,
+      category: this.categoryNode && this.categoryNode.innerText,
       brand: this.brandNode.innerText.trim(),
       name: this.nameNode.innerText,
-      price: this.priceNode.innerText,
-      badPrice: this.badPriceNode.innerText,
+      price: this.priceNode && this.priceNode.innerText,
+      badPrice: this.badPriceNode && this.badPriceNode.innerText,
     }
 
     return productData
@@ -143,7 +145,7 @@ class StylesLoader {
   }
 
   #addClassnameToNode(node, className) {
-    node.classList.add(className)
+    node && node.classList.add(className)
   }
 
   #addStylesToHTML(stylesheet) {
