@@ -1,15 +1,6 @@
-# 🚀 Welcome to your new awesome project!
+## Gold Apple: Brands Warning | Fast Copy
 
-This project has been created using **webpack-cli**, you can now run
+This script warns about prohibited brands and allows for quickly copying product data
 
-```
-npm run build
-```
+> Just copy raw code from ``` dist/main.js ``` and paste it to your Chrome custom script extenciton
 
-or
-
-```
-yarn build
-```
-
-to bundle your application
